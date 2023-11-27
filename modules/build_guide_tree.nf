@@ -24,3 +24,18 @@ process make_fasta {
     somatic_fasta_from_tsv.py ${snvs} ${samplelist} somatic_variants.fa
     """
 }
+
+process build_guide_tree {
+    input:
+    path fasta
+
+    output:
+    path "somatic_variants.fa.treefile"
+
+    publishDir "${params.outputDir}/guide_tree", mode: 'copy'
+
+    script:
+    """
+    iqtree -T ${task.cpus} -s ${fasta}
+    """
+}

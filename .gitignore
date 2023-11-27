@@ -1,3 +1,4 @@
 work/
 .nextflow.log*
 .nextflow/
+bin/__pycache__/

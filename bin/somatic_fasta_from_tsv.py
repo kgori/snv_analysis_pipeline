@@ -2,6 +2,7 @@
 from __future__ import print_function
 import itertools
 import argparse
+from io_helpers import FileReader # uniform interface for reading standard and gzipped files
 
 def parse_cli():
     parser = argparse.ArgumentParser()
@@ -15,7 +16,7 @@ def parse_cli():
 def read_sample_list(samplefile):
     hosts = []
     tumours = []
-    with open(samplefile) as infile:
+    with FileReader(samplefile) as infile:
         infile.readline()
         for line in infile:
             samplename, sampletype = line.strip().split()
@@ -167,7 +168,7 @@ if __name__ == '__main__':
 
     hosts, tumours = read_sample_list(args.samplelist)
 
-    with open(args.infile) as infile:
+    with FileReader(args.infile) as infile:
         for linenum, line in enumerate(infile, start=1):
             if line.startswith('#CHROM') or line.startswith("CHROM"):
                 header = line

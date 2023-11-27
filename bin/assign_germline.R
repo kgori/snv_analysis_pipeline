@@ -1,15 +1,52 @@
 #!/usr/bin/env Rscript
 
-library(cnpipe)
-# STEP 2: Load the read counts, compute VAFs and assign somatic / germline state using host panel
 suppressPackageStartupMessages(library(data.table))
-suppressPackageStartupMessages(library(tidyr))
 suppressPackageStartupMessages(library(logging))
 basicConfig("INFO")
 
+check_file <- function(filename) {
+    if (!file.exists(filename)) {
+        logerror(paste("File", filename, "not found"))
+        stop("ERROR - file error")
+    } else {
+        return(normalizePath(filename))
+    }
+}
+
+variant_depth_filter <- 
+  function (dt, variant_column_names, min_variant_reads, min_vaf) {
+    mask <- rep(FALSE, nrow(dt))
+    if (length(min_variant_reads) == length(variant_column_names)) {
+        thresholds <- data.frame(name = variant_column_names,
+            threshold = min_variant_reads, stringsAsFactors = FALSE)
+    }
+    else {
+        thresholds <- data.frame(name = variant_column_names,
+            threshold = rep(min_variant_reads[1], length(variant_column_names)),
+            stringsAsFactors = FALSE)
+    }
+    for (i in 1:nrow(thresholds)) {
+        nv <- thresholds[i, ][["name"]]
+        vaf <- sub(".nv", ".vaf", nv)
+        min_nv <- thresholds[i, ][["threshold"]]
+        mask <- mask | dt[, eval(as.name(nv)) >= min_nv | eval(as.name(vaf)) >=
+            min_vaf]
+    }
+    mask[is.na(mask)] <- FALSE
+    mask
+}
+
+# Compute VAFs
+compute_vaf <- function(var, tot) {
+    vaf <- var / tot
+    vaf[is.na(vaf)] <- 0
+    vaf
+}
+
 args <- commandArgs(trailing = TRUE)
 if (length(args) < 1) {
-    stop("Usage: Rscript assign_germline.R <snvs_tsv> <output_tsv> [<optional:host_panel_snvs>]")
+    stop(paste("Usage: Rscript assign_germline.R <snvs_tsv>",
+               "<output_tsv> [<optional:host_panel_snvs>]"))
 }
 
 snvs_tsv <- check_file(args[1])
@@ -38,18 +75,13 @@ expected_tumour_nr <- paste(smpl_assn[Type == "T", Sample],
                             "nr", sep = ".")
 tumour_nr <- intersect(expected_tumour_nr, nr_cols)
 
-# Compute VAFs
-compute_vaf <- function(var, tot) {
-    vaf <- var / tot
-    vaf[is.na(vaf)] <- 0
-    vaf
-}
 for (sample in c(host_nr, tumour_nr)) {
     loginfo(paste("Computing VAF for", sample))
     vaf_col <- sub(".nr", ".vaf", sample)
     variants_col <- sub(".nr", ".nv", sample)
     total_col <- sample
-    snvs[, (vaf_col) := compute_vaf(eval(as.name(variants_col)), eval(as.name(total_col)))]
+    snvs[, (vaf_col) := compute_vaf(eval(as.name(variants_col)),
+                                    eval(as.name(total_col)))]
 }
 
 # Filter by germline panel

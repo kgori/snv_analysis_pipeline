@@ -1,4 +1,5 @@
-params.variantsFile = ""
+params.SNVsFile = ""
+params.indelsFile = ""
 params.sampleList = ""
 params.panelFile = ""
 params.outputDir = "./out"
@@ -7,13 +8,18 @@ include { vcf_to_read_counts }     from "./modules/snv_postprocessing.nf"
 include { assign_germline_status } from "./modules/snv_postprocessing.nf"
 include { extract_somatic }        from "./modules/build_guide_tree.nf"
 include { make_fasta }             from "./modules/build_guide_tree.nf"
+include { build_guide_tree }       from "./modules/build_guide_tree.nf"
+include { extract_vcf_data }       from "./modules/1_extract_info.nf"
+include { import_variants }        from "./modules/2_import_variants.nf"
 
 workflow {
-    println "Variants File = ${params.variantsFile}"
+    println "Variants File = ${params.SNVsFile}"
+    println "Indels File = ${params.indelsFile}"
     println "Sample List = ${params.sampleList}"
     println "Panel File = ${params.panelFile}"
     println "Output Dir = ${params.outputDir}"
-    variants = Channel.fromPath("${params.variantsFile}", checkIfExists: true)
+    variants = Channel.fromPath("${params.SNVsFile}", checkIfExists: true)
+    indels = Channel.fromPath("${params.indelsFile}", checkIfExists: true)
     samples = Channel.fromPath("${params.sampleList}", checkIfExists: true)
     panel = Channel.fromPath("${params.panelFile}", checkIfExists: true)
 
@@ -22,4 +28,8 @@ workflow {
 
     somatic_snvs = extract_somatic(annotated_variants[0])
     somatic_fasta = make_fasta(somatic_snvs, samples)
+    tree = build_guide_tree(somatic_fasta)
+
+    extract = extract_vcf_data(variants.concat(indels))
+    imported = extract | flatten | import_variants
 }
