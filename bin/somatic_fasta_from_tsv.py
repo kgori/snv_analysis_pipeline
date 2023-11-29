@@ -25,7 +25,7 @@ def read_sample_list(samplefile):
             elif sampletype == 'T':
                 tumours.append(samplename)
             else:
-                raise ValueError('Unknown sample type: {}'.format(sampletype))
+                raise ValueError('Unknown sample type: {}.\n Format should be two columns: SampleName<tab>SampleType(H|T)'.format(sampletype))
     return hosts, tumours
 
 
