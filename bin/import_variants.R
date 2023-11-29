@@ -13,6 +13,5 @@ if (!file.exists(filename)) {
 
 check_names <-  grepl("Metadata", filename)
 tbl = read.table(filename, header = TRUE, check.names = check_names)
-save(tbl, file = outfile)
+saveRDS(tbl, file = outfile)
 rm(tbl)
-
