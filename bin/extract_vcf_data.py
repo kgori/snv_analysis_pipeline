@@ -32,17 +32,18 @@ from io_helpers import FileReader
 
 
 # If not 2 arguments: print help
-if len(sys.argv) != 3:
+if len(sys.argv) != 4:
     print ('\n1_ExtractVcfData.py: Extracts metadata (CHROM, POS, ID, REF, ALT, QUAL, FILTER, INFO), total number')
     print ('                     of reads (NR), and number of reads supporting the variant (NV), for every variant')
     print ('                     in a VCF or gzipped VCF file (with Platypus output format), into three text files.')
     print ('          Arguments: Path to a VCF or gzipped VCF file (.vcf[.gz] extension, with Platypus output format).')
+    print ('                     Prefix for output files (e.g. "snvs").')
     print ('                     Path to output directory.')
     print ('              Usage: 1_ExtractVcfData.py input_variants.vcf[.gz] path/to/output_dir\n')
     sys.exit(0)
 
 
-script, vcf_file, out_dir = sys.argv
+script, vcf_file, prefix, out_dir = sys.argv
 
 
 # Helper function: open a VCF or gzipped VCF file
@@ -67,9 +68,9 @@ else:
     print ('\nERROR: Invalid file extension. Only extensions .vcf and .vcf.gz are accepted.\n')
     sys.exit(1)
 
-out_file_NR = os.path.join(out_dir, os.path.basename(vcf_file)[:-ext_len] + '_NR.tsv.gz')
-out_file_NV = os.path.join(out_dir, os.path.basename(vcf_file)[:-ext_len] + '_NV.tsv.gz')
-out_file_MD = os.path.join(out_dir, os.path.basename(vcf_file)[:-ext_len] + '_Metadata.tsv.gz')
+out_file_NR = os.path.join(out_dir, prefix + '_NR.tsv.gz')
+out_file_NV = os.path.join(out_dir, prefix + '_NV.tsv.gz')
+out_file_MD = os.path.join(out_dir, prefix + '_Metadata.tsv.gz')
 
 print (f'\nInput file:          {vcf_file}')
 print (f'Output NR file:      {out_file_NR}')
