@@ -61,6 +61,11 @@ if (length(args) == 4) {
 }
 
 smpl_assn <- fread(smpl_assn_file)
+setnames(smpl_assn, c("Sample", "Type"))
+if (!(all(smpl_assn$Type %in% c("H", "T")))) {
+    logerror("Something is wrong with the sample file. Types other than H|T were supplied in Column 2")
+    stop("ERROR - Bad Input")
+}
 
 loginfo(paste("Loading snvs from", snvs_tsv))
 snvs <- fread(snvs_tsv, showProgress = TRUE)
