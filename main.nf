@@ -11,6 +11,7 @@ include { make_fasta }             from "./modules/build_guide_tree.nf"
 include { build_guide_tree }       from "./modules/build_guide_tree.nf"
 include { extract_vcf_data }       from "./modules/1_extract_info.nf"
 include { import_variants }        from "./modules/2_import_variants.nf"
+include { filter_variants }        from "./modules/3_filter_variants.nf"
 
 workflow {
     println "Variants File = ${params.SNVsFile}"
@@ -28,8 +29,12 @@ workflow {
 
     somatic_snvs = extract_somatic(annotated_variants[0])
     somatic_fasta = make_fasta(somatic_snvs, samples)
-    tree = build_guide_tree(somatic_fasta)
+    guide_tree = build_guide_tree(somatic_fasta)
 
-    extract = extract_vcf_data(variants.concat(indels))
+    extract_ch =
+        variants.map { it -> tuple("snvs", it) }
+        .concat(indels.map { it -> tuple("indels", it) })
+    extract = extract_vcf_data(extract_ch)
     imported = extract | flatten | import_variants
+    filtered = filter_variants(imported | collect, samples, guide_tree)
 }

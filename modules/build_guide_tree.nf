@@ -14,14 +14,14 @@ process extract_somatic {
 process make_fasta {
     input:
     path snvs
-    path samplelist
+    path samplenames
 
     output:
     path "somatic_variants.fa"
 
     script:
     """
-    somatic_fasta_from_tsv.py ${snvs} ${samplelist} somatic_variants.fa
+    somatic_fasta_from_tsv.py ${snvs} ${samplenames} somatic_variants.fa
     """
 }
 

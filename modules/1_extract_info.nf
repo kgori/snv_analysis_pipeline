@@ -1,14 +1,14 @@
 process extract_vcf_data {
     input:
-    path vcf
+    tuple val(id), path(vcf)
 
     output:
-    tuple path("${vcf.getSimpleName()}_Metadata.tsv.gz"), \
-      path("${vcf.getSimpleName()}_NR.tsv.gz"), \
-      path("${vcf.getSimpleName()}_NV.tsv.gz")
+    tuple path("${id}_Metadata.tsv.gz"), \
+      path("${id}_NR.tsv.gz"), \
+      path("${id}_NV.tsv.gz")
 
     script:
     """
-    extract_vcf_data.py ${vcf} .
+    extract_vcf_data.py ${vcf} ${id} .
     """
 }

@@ -3,10 +3,10 @@ process import_variants {
     path tsv
 
     output:
-    path "VariantTables_${tsv.getSimpleName()}.RData"
+    path "VariantTables_${tsv.getSimpleName()}.RDS"
 
     script:
     """
-    import_variants.R ${tsv} VariantTables_${tsv.getSimpleName()}.RData
+    import_variants.R ${tsv} VariantTables_${tsv.getSimpleName()}.RDS
     """
 }
