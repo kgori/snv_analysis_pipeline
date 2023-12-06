@@ -29,11 +29,13 @@ smpl_assn_file <- args[1]
 tree_file <- args[2]
 
 if (!file.exists(smpl_assn_file)) {
-    stop("Sample assignment file not found")
+    logerror("Sample association file not found: %s", smpl_assn_file)
+    stop("ERROR - Missing file input")
 }
 
 if (!file.exists(tree_file)) {
-    stop("Tree file not found")
+    logerror("Tree file not found: %s", tree_file)
+    stop("ERROR - Missing file input")
 }
 
 # Function to print numbers with commas
@@ -60,7 +62,6 @@ indels.vaf = indels.nv / indels.nr
 indels.vaf[is.na(indels.vaf)] = 0
 
 # Create tumour and host indices
-# TODO: Use external table to define tumour and host samples, not regex
 smpl_assn <- fread(smpl_assn_file)
 setnames(smpl_assn, c("Sample", "Type"))
 if (!(all(smpl_assn$Type %in% c("H", "T")))) {
@@ -267,11 +268,11 @@ cat("After filtering:", num(nrow(snvs.metadata)), "SNVs and", num(nrow(indels.me
 # Save objects
 cat("Saving tables to data/ directory...\n")
 dir.create("data")
-save(snvs.metadata,   file = "data/VariantTables_Filtered_snvs.metadata.RData")
-save(snvs.nr,         file = "data/VariantTables_Filtered_snvs.nr.RData")
-save(snvs.nv,         file = "data/VariantTables_Filtered_snvs.nv.RData")
-save(snvs.vaf,        file = "data/VariantTables_Filtered_snvs.vaf.RData")
-save(indels.metadata, file = "data/VariantTables_Filtered_indels.metadata.RData")
-save(indels.nr,       file = "data/VariantTables_Filtered_indels.nr.RData")
-save(indels.nv,       file = "data/VariantTables_Filtered_indels.nv.RData")
-save(indels.vaf,      file = "data/VariantTables_Filtered_indels.vaf.RData")
+saveRDS(snvs.metadata,   file = "data/VariantTables_Filtered_snvs_Metadata.RDS")
+saveRDS(snvs.nr,         file = "data/VariantTables_Filtered_snvs_NR.RDS")
+saveRDS(snvs.nv,         file = "data/VariantTables_Filtered_snvs_NV.RDS")
+saveRDS(snvs.vaf,        file = "data/VariantTables_Filtered_snvs_VAF.RDS")
+saveRDS(indels.metadata, file = "data/VariantTables_Filtered_indels_Metadata.RDS")
+saveRDS(indels.nr,       file = "data/VariantTables_Filtered_indels_NR.RDS")
+saveRDS(indels.nv,       file = "data/VariantTables_Filtered_indels_NV.RDS")
+saveRDS(indels.vaf,      file = "data/VariantTables_Filtered_indels_VAF.RDS")

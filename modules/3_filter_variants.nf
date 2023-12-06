@@ -5,7 +5,10 @@ process filter_variants {
     path tree
 
     output:
-    path("*filtered.RDS")
+    path("data/*.RDS")
+    path("site_patterns/*.pdf")
+
+    publishDir "${params.outputDir}/site_patterns", pattern: 'site_patterns/*.pdf', mode: 'copy'
 
     script:
     """
