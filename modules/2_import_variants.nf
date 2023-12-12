@@ -7,6 +7,6 @@ process import_variants {
 
     script:
     """
-    import_variants.R ${tsv} VariantTables_${tsv.getSimpleName()}.RDS
+    2_import_variants.R ${tsv} VariantTables_${tsv.getSimpleName()}.RDS
     """
 }

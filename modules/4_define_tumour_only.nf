@@ -6,11 +6,11 @@ process define_tumour_only {
     path purities
 
     output:
-    path "data/*.RDS"
     path "data/*.RData"
+    path "data/*.RDS"
 
     script:
     """
-    define_tumour_only.R ${samplenames} ${matchedhosts} ${purities}
+    4_define_tumour_only.R ${samplenames} ${matchedhosts} ${purities}
     """
 }

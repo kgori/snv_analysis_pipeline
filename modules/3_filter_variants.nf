@@ -12,6 +12,6 @@ process filter_variants {
 
     script:
     """
-    filter_variants.R ${samplenames} ${tree}
+    3_filter_variants.R ${samplenames} ${tree}
     """
 }

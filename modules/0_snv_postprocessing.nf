@@ -32,6 +32,6 @@ process assign_germline_status {
 
     shell:
     """
-    assign_germline.R ${tsv} ${samplenames} snvs_status.tsv.gz ${panel}
+    0.1_assign_germline.R ${tsv} ${samplenames} snvs_status.tsv.gz ${panel}
     """
 }

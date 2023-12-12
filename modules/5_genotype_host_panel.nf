@@ -1,6 +1,6 @@
 process prepare_vcf {
     input:
-    path vcf
+    path rds
 
     output:
     tuple val("genotyping_vcf"), path("data/SomaticVariants_ToGenotype.vcf.gz*")
@@ -46,6 +46,6 @@ process make_filter_list {
 
     script:
     """
-    make_filter_list.py ${vcf} > log.txt
+    5.3_make_filter_list.py ${vcf} > log.txt
     """
 }

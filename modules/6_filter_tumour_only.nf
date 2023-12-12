@@ -2,7 +2,7 @@ process filter_tumour_only {
     input:
     path indices
     path rds
-    path lowcov_filter_list
+    path host_filter_list
     path repeats
     path purity
     path matchedhosts

@@ -42,8 +42,11 @@ indels.nv.tonly       <- readRDS("VariantTables_Split_indels_NV.tonly.RDS")
 indels.vaf.tonly      <- readRDS("VariantTables_Split_indels_VAF.tonly.RDS")
 
 # Load host panel read counts
-panel.nv.total = read.table("filter_list.txt", 
-                            header=T, stringsAsFactors=F)
+panel.nv.total = fread("filter_list.txt")
+if (ncol(panel.nv.total) == 4) {
+    setnames(panel.nv.total, c("CHROM", "POS", "REF", "ALT"))
+    panel.nv.total[, NV_TOTAL := 5]
+}
 cat(num(nrow(panel.nv.total)), "variants genotyped on host panel\n\n")
 
 

@@ -9,6 +9,6 @@ process extract_vcf_data {
 
     script:
     """
-    extract_vcf_data.py ${vcf} ${id} .
+    1_extract_vcf_data.py ${vcf} ${id} .
     """
 }

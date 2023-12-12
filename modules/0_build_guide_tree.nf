@@ -21,7 +21,7 @@ process make_fasta {
 
     script:
     """
-    somatic_fasta_from_tsv.py ${snvs} ${samplenames} somatic_variants.fa
+    0.2_somatic_fasta_from_tsv.py ${snvs} ${samplenames} somatic_variants.fa
     """
 }
 
@@ -36,6 +36,6 @@ process build_guide_tree {
 
     script:
     """
-    iqtree -T ${task.cpus} -s ${fasta}
+    iqtree2 -T ${task.cpus} -m GTR+G{4} -s ${fasta} 
     """
 }
