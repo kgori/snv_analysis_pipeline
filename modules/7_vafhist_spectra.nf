@@ -12,6 +12,8 @@ process vafhist_spectra {
     path "data/VariantSpectra_Filt.RData"
     path "data/TumourPurity.RData"
 
+    publishDir "${params.outputDir}/VAFhist_Spectra", mode: 'copy'
+
     script:
     """
     7_VAFhist_Spectra.R ${matchedhosts}

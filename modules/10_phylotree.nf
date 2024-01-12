@@ -25,6 +25,8 @@ process run_unpartitioned_raxml {
     output:
     path "data/*"
 
+    publishDir "${params.outputDir}/raxml_unpartitioned"
+
     script:
     """
     10.2_RunRAxML.sh ${phy} \$(realpath data) ${task.cpus} no_partition
@@ -40,6 +42,8 @@ process run_partitioned_raxml {
 
     output:
     path "data/*"
+
+    publishDir "${params.outputDir}/raxml_partitioned"
 
     script:
     """

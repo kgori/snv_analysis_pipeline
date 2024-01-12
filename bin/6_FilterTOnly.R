@@ -30,6 +30,13 @@ suppressPackageStartupMessages(library(GenomicRanges))
 # Function to print numbers with commas
 num = function(x) prettyNum(x, big.mark=",")
 
+# Process command line arguments
+filter_list_file <- commandArgs(TRUE)[1]
+hostmatch_file <- commandArgs(TRUE)[2]
+stopifnot(file.exists(filter_list_file))
+stopifnot(file.exists(hostmatch_file))
+
+
 # Load somatic variant data
 load("VariantTables_Indices.RData")
 snvs.metadata.tonly   <- readRDS("VariantTables_Split_snvs_Metadata.tonly.RDS")
@@ -42,7 +49,7 @@ indels.nv.tonly       <- readRDS("VariantTables_Split_indels_NV.tonly.RDS")
 indels.vaf.tonly      <- readRDS("VariantTables_Split_indels_VAF.tonly.RDS")
 
 # Load host panel read counts
-panel.nv.total = fread("filter_list.txt")
+panel.nv.total = fread(filter_list_file, na.strings = c("NA", "N/A", ""))
 if (ncol(panel.nv.total) == 4) {
     setnames(panel.nv.total, c("CHROM", "POS", "REF", "ALT"))
     panel.nv.total[, NV_TOTAL := 5]
@@ -200,7 +207,7 @@ no.bias.ind.idx = apply(nf.nr.ind, 1, function(nf.nr) {
 load("TumourPurity.RData")
 
 # Match tumours and hosts by number to identify unmatched tumours
-hostmatch <- fread(commandArgs(TRUE)[1], na.strings = c("", "NA", "N/A"))
+hostmatch <- fread(hostmatch_file, na.strings = c("NA", "N/A", ""))
 setnames(hostmatch, c("Tumour", "Host"))
 hostmatch[data.table(Tumour=samples[tumours]), , on = "Tumour"]
 unmatched <- hostmatch[data.table(Tumour=samples[tumours]), is.na(Host), on = "Tumour"]
