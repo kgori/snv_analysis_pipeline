@@ -41,6 +41,9 @@ include { process_vep_annotation }  from "./modules/9_vep.nf"
 include { make_alignment }          from "./modules/10_phylotree.nf"
 include { run_unpartitioned_raxml } from "./modules/10_phylotree.nf"
 include { run_partitioned_raxml }   from "./modules/10_phylotree.nf"
+/* Skipping section 11 as it is not relevant */
+include { annotate_metadata }       from "./modules/12_snv_tables.nf"
+include { write_arrow }             from "./modules/12_snv_tables.nf"
 
 workflow {
     println "Variants File = ${params.SNVsFile}"
@@ -124,4 +127,9 @@ workflow {
     partition = alignment[2]
     run_unpartitioned_raxml(phy)
     run_partitioned_raxml(phy, partition)
+
+    // Prepare arrow-format variant tables
+    filtered_rds = filtered[0]
+    arrow_prep = annotate_metadata(filtered_rds, tonly_rds, filt_rds)
+    write_arrow(arrow_prep.snvs, arrow_prep.indels, filtered_rds, hostmatch)
 }
