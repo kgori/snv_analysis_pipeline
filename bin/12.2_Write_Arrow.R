@@ -76,6 +76,8 @@ for (samplename_ in tumours) {
         dt[, hostname := NA_character_]
     }
 
+    setkey(dt, samplename, CHROM, POS, REF, ALT)
+
     cat(paste("Writing output to", outdir, "\n"))
     arrow::write_dataset(dt, outdir, partitioning = c("samplename", "CHROM"))
     rm(dt)
