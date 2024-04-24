@@ -24,6 +24,8 @@ process run_vep {
     output:
     path "data/*.tsv"
 
+    publishDir "${params.outputDir}/vep_output/raw", mode: 'copy'
+
     script:
     """
     mkdir -p data
@@ -40,6 +42,8 @@ process process_vep_annotation {
 
     output:
     path "data/*.RDS"
+
+    publishDir "${params.outputDir}/vep_output/processed", mode: 'copy'
 
     script:
     """
