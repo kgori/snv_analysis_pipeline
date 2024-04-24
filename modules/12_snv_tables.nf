@@ -24,6 +24,8 @@ process write_arrow {
     output:
     path "data/dataset"
 
+    publishDir "${params.outputDir}/dataset", mode: 'copy'
+
     script:
     """
     12.2_Write_Arrow.R ${matchedhosts}
